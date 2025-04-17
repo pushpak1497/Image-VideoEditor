@@ -3,12 +3,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import VideoCard from "@/components/VideoCard";
 import { Video } from "@/types";
-import { Target } from "lucide-react";
+// import { Target } from "lucide-react";
 
 function Home() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const fetchVideos = useCallback(async () => {
     try {
       const response = await axios.get("/api/video");
@@ -18,8 +18,7 @@ function Home() {
         throw new Error("UnExpected response format");
       }
     } catch (error: any) {
-      console.log(error?.message);
-      setError(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
