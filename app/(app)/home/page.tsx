@@ -11,14 +11,18 @@ function Home() {
   // const [error, setError] = useState<string | null>(null);
   const fetchVideos = useCallback(async () => {
     try {
-      const response = await axios.get("/api/video");
+      const response = await axios.get<Video[]>("/api/video");
       if (Array.isArray(response.data)) {
         setVideos(response.data);
       } else {
         throw new Error("UnExpected response format");
       }
-    } catch (error: any) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("Unexpected non-Error thrown:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -27,19 +31,17 @@ function Home() {
     fetchVideos();
   }, [fetchVideos]);
 
-  const handleDownload = useCallback((url: string, title: string) => {
-    () => {
-      // const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${title}.mp4`);
-      link.setAttribute("target", "_blank");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      // window.URL.revokeObjectURL(url);
-      // document.body.removeChild(link);
-    };
+  const handleDownload = useCallback((url: string, title: string): void => {
+    // const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${title}.mp4`);
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url);
+    // document.body.removeChild(link);
   }, []);
   if (loading) return <div>Loading........</div>;
 
